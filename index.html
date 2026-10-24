@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FITNESS.EXE — 像素健身养成</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ================= 桌面 ================= -->
+<div id="desktop">
+  <div class="stars"></div>
+  <div class="mountains"></div>
+
+  <!-- 桌面图标 -->
+  <div class="desk-icon" id="icon-about">
+    <div class="icon-img icon-pc"></div>
+    <span>我的电脑</span>
+  </div>
+  <div class="desk-icon" id="icon-trash">
+    <div class="icon-img icon-bin"></div>
+    <span>回收站</span>
+  </div>
+
+  <!-- ============ 主窗口：角色养成 ============ -->
+  <div class="window" id="win-main" style="left:8%; top:6%; width:560px;">
+    <div class="titlebar">
+      <span class="tb-title">FITNESS.EXE — 你的身体就是角色</span>
+      <div class="tb-btns">
+        <button class="tb-btn" data-min="win-main">_</button>
+        <button class="tb-btn" data-close="win-main">×</button>
+      </div>
+    </div>
+    <div class="win-body">
+      <!-- 角色舞台 -->
+      <div class="stage">
+        <div class="stage-platform"></div>
+        <div id="char-wrap" title="点我聊聊">
+          <div id="char"></div>
+          <div id="char-shadow"></div>
+        </div>
+        <div id="speech" class="hidden"></div>
+        <div id="fx-layer"></div>
+        <div id="char-tag" class="px">Lv.3 · 瘦猴</div>
+      </div>
+
+      <!-- 等级 / XP -->
+      <div class="hud">
+        <div class="hud-row">
+          <span class="px" id="hud-level">LV 3</span>
+          <div class="bar xp-bar"><div class="bar-fill" id="xp-fill"></div></div>
+          <span class="px small" id="hud-xp">280/300</span>
+        </div>
+        <div class="attrs">
+          <div class="attr"><span>力量</span><div class="bar str"><div class="bar-fill" id="attr-str"></div></div><b id="attr-str-v">0</b></div>
+          <div class="attr"><span>耐力</span><div class="bar end"><div class="bar-fill" id="attr-end"></div></div><b id="attr-end-v">0</b></div>
+          <div class="attr"><span>敏捷</span><div class="bar agi"><div class="bar-fill" id="attr-agi"></div></div><b id="attr-agi-v">0</b></div>
+        </div>
+        <div class="streak-line">连续打卡 <b id="streak-v" class="px small">12</b> 天 · 周完成率 <b id="week-v" class="px small">86%</b></div>
+      </div>
+
+      <!-- 习惯列表 -->
+      <div class="habit-head">
+        <span>今日训练任务</span>
+        <button class="btn95" id="btn-add-habit">+ 新任务</button>
+        <button class="btn95" id="btn-diet">膳食</button>
+        <button class="btn95" id="btn-stats">统计</button>
+      </div>
+      <ul id="habit-list"></ul>
+    </div>
+  </div>
+
+  <!-- ============ 录入对话框 ============ -->
+  <div class="window dialog hidden" id="win-log" style="left:38%; top:22%; width:340px;">
+    <div class="titlebar">
+      <span class="tb-title" id="log-title">DATA ENTRY</span>
+      <div class="tb-btns"><button class="tb-btn" data-close="win-log">×</button></div>
+    </div>
+    <div class="win-body">
+      <div id="log-fields"></div>
+      <div class="dlg-actions">
+        <button class="btn95 primary" id="log-ok">确定</button>
+        <button class="btn95" data-close="win-log">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 添加习惯对话框 ============ -->
+  <div class="window dialog hidden" id="win-add" style="left:42%; top:30%; width:320px;">
+    <div class="titlebar">
+      <span class="tb-title">NEW QUEST</span>
+      <div class="tb-btns"><button class="tb-btn" data-close="win-add">×</button></div>
+    </div>
+    <div class="win-body">
+      <label class="fld"><span>快捷选择（内置任务）</span>
+        <select id="add-preset"><option value="">— 自定义 —</option></select>
+      </label>
+      <label class="fld"><span>任务名称</span><input id="add-name" maxlength="8" placeholder="如:引体向上"></label>
+      <label class="fld"><span>训练类型</span>
+        <select id="add-type">
+          <option value="strength">力量（组×次）</option>
+          <option value="endurance">耐力（公里）</option>
+          <option value="agility">敏捷（分钟）</option>
+          <option value="life">生活（次数）</option>
+        </select>
+      </label>
+      <div class="dlg-actions">
+        <button class="btn95 primary" id="add-ok">创建</button>
+        <button class="btn95" data-close="win-add">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 统计看板窗口 ============ -->
+  <div class="window hidden" id="win-stats" style="left:40%; top:4%; width:560px;">
+    <div class="titlebar">
+      <span class="tb-title">BOARD.SYS — 数据看板</span>
+      <div class="tb-btns">
+        <button class="tb-btn" data-min="win-stats">_</button>
+        <button class="tb-btn" data-close="win-stats">×</button>
+      </div>
+    </div>
+    <div class="win-body">
+      <div class="stats-row">
+        <div style="flex:1.2">
+          <div class="stats-title">近 7 天经验产出</div>
+          <div id="week-chart"></div>
+        </div>
+        <div style="flex:1">
+          <div class="stats-title">属性雷达</div>
+          <canvas id="radar" width="180" height="180"></canvas>
+        </div>
+      </div>
+      <div class="stats-title">近 7 天卡路里摄入</div>
+      <div id="cal-chart"></div>
+      <div class="stats-title">近 28 天打卡热力</div>
+      <div id="heatmap"></div>
+      <div class="stats-title">进化图鉴</div>
+      <div id="codex">
+        <div class="codex-item" data-form="1"><div class="codex-char" id="codex-1"></div><span>Lv1 瘦猴</span></div>
+        <div class="codex-item" data-form="2"><div class="codex-char" id="codex-2"></div><span>Lv4 健体者</span></div>
+        <div class="codex-item" data-form="3"><div class="codex-char" id="codex-3"></div><span>Lv7 肌肉战士</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 膳食记录窗口 ============ -->
+  <div class="window hidden" id="win-diet" style="left:18%; top:16%; width:420px;">
+    <div class="titlebar">
+      <span class="tb-title">KITCHEN.EXE — 膳食记录</span>
+      <div class="tb-btns">
+        <button class="tb-btn" data-min="win-diet">_</button>
+        <button class="tb-btn" data-close="win-diet">×</button>
+      </div>
+    </div>
+    <div class="win-body">
+      <div class="fld-row">
+        <label class="fld"><span>餐别</span>
+          <select id="diet-meal">
+            <option>早餐</option><option>午餐</option><option>晚餐</option><option>加餐</option>
+          </select>
+        </label>
+        <label class="fld"><span>内置食物库</span>
+          <select id="diet-preset"><option value="">— 自定义 —</option></select>
+        </label>
+      </div>
+      <div class="fld-row">
+        <label class="fld"><span>名称</span><input id="diet-name" maxlength="12" placeholder="如:鸡胸肉"></label>
+        <label class="fld"><span>热量 kcal</span><input id="diet-kcal" type="number" min="0" placeholder="0"></label>
+      </div>
+      <div class="dlg-actions" style="justify-content:flex-start">
+        <button class="btn95 primary" id="diet-ok">记录（+2 XP）</button>
+      </div>
+      <div class="cal-line">
+        <span>今日热量</span>
+        <div class="bar cal-bar"><div class="bar-fill" id="cal-fill"></div></div>
+        <b class="px small" id="cal-text">0/2000</b>
+      </div>
+      <ul id="meal-list"></ul>
+    </div>
+  </div>
+
+  <!-- ============ 重置确认对话框 ============ -->
+  <div class="window dialog hidden" id="win-reset" style="left:36%; top:38%; width:300px;">
+    <div class="titlebar">
+      <span class="tb-title">RESET.SYS</span>
+      <div class="tb-btns"><button class="tb-btn" data-close="win-reset">×</button></div>
+    </div>
+    <div class="win-body center">
+      <p><b>确定要格式化所有数据吗？</b></p>
+      <p>角色将回到 Lv1 瘦猴重新练号，<br>历史战绩与膳食记录保留。</p>
+      <div class="dlg-actions" style="justify-content:center">
+        <button class="btn95 danger" id="reset-ok">确定重置</button>
+        <button class="btn95" data-close="win-reset">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 关于对话框 ============ -->
+  <div class="window dialog hidden" id="win-about" style="left:30%; top:35%; width:300px;">
+    <div class="titlebar">
+      <span class="tb-title">关于</span>
+      <div class="tb-btns"><button class="tb-btn" data-close="win-about">×</button></div>
+    </div>
+    <div class="win-body center">
+      <p class="px small">FITNESS.EXE v1.0</p>
+      <p>你的身体就是游戏角色。<br>每一组训练，都在喂养它。</p>
+      <div class="dlg-actions"><button class="btn95" data-close="win-about">确定</button></div>
+    </div>
+  </div>
+
+  <!-- 升级/进化横幅 -->
+  <div id="banner" class="hidden">
+    <div class="px" id="banner-text">LEVEL UP!</div>
+    <div class="px small" id="banner-sub"></div>
+  </div>
+  <div id="flash"></div>
+
+  <!-- ================= 任务栏 ================= -->
+  <div id="taskbar">
+    <button class="btn95" id="start-btn">⊞ 开始</button>
+    <div id="task-items"></div>
+    <div class="tray">
+      <button class="btn95 tray-btn" id="reset-btn" title="回到初始状态">RST</button>
+      <button class="btn95 tray-btn" id="mute-btn" title="音效开关">♪</button>
+      <span class="px small" id="clock">00:00</span>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
